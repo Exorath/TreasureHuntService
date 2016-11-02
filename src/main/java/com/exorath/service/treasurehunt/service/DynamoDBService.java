@@ -48,7 +48,7 @@ public class DynamoDBService extends SimpleService {
 		Item outcome;
 		try {
 			outcome = table.getItem(spec);
-			logger.info("getTreasures(" + playerId + ") succeeded: " + outcome);
+			logger.info("getTreasures(" + playerId + ") succeeded:\n" + outcome);
 		} catch (Exception ex) {
 			logger.error("getTreasures(" + playerId + ") failed:\n" + ex.getMessage());
 			return new Treasure[0];
