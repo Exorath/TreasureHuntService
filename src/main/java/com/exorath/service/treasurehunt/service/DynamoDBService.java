@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 import java.util.UUID;
 
 public class DynamoDBService extends SimpleService {
-	private static final Logger logger = new LoggerFactory.getLogger(DynamoDBService.class);
+	private static final Logger logger = LoggerFactory.getLogger(DynamoDBService.class);
 
 	private final AmazonDynamoDBClient client;
 	private final DynamoDB db;
