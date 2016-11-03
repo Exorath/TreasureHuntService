@@ -48,8 +48,7 @@ public class DynamoDBService implements Service {
 
 	private Table table;
 
-	public DynamoDBService() {
-		DynamoDBProvider provider = DynamoDBProvider.getEnvironmentDynamoDBProvider();
+	public DynamoDBService(DynamoDBProvider provider) {
 		try {
 			table = getTable(TABLE_NAME, provider.getDB());
 		} catch (InterruptedException ex) {
