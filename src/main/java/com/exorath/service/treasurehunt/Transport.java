@@ -16,7 +16,6 @@
 
 package com.exorath.service.treasurehunt;
 
-import com.exorath.service.treasurehunt.service.Service;
 import com.google.gson.Gson;
 import spark.Route;
 
@@ -27,19 +26,21 @@ import static spark.Spark.port;
 import static spark.Spark.put;
 
 public class Transport {
+	private static final String PLAYER_ID = "playerId";
+	private static final String TREASURE_ID = "treasureId";
 	private static final Gson Gson = new Gson();
 
 	public static void setup(Service srv, PortProvider provider) {
 		port(provider.getPort());
-		get("/players/:playerId/treasures/", Transport.getGetTreasuresRoute(srv), Gson::toJson);
-		put("/players/:playerId/treasures/:treasureId", Transport.getSetTreasureRoute(srv), Gson::toJson);
+		get("/players/:" + PLAYER_ID + "/treasures/", Transport.getGetTreasuresRoute(srv), Gson::toJson);
+		put("/players/:" + PLAYER_ID + "/treasures/:" + TREASURE_ID, Transport.getSetTreasureRoute(srv), Gson::toJson);
 	}
 
 	public static Route getGetTreasuresRoute(Service srv) {
-		return (req, res) -> srv.getTreasures(UUID.fromString(req.params("playerId")));
+		return (req, res) -> srv.getTreasures(UUID.fromString(req.params(PLAYER_ID)));
 	}
 
 	public static Route getSetTreasureRoute(Service srv) {
-		return (req, res) -> srv.setTreasure(UUID.fromString(req.params("playerId")), req.params("treasureId"));
+		return (req, res) -> srv.setTreasure(UUID.fromString(req.params(PLAYER_ID)), req.params(TREASURE_ID));
 	}
 }
