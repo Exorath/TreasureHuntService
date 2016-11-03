@@ -39,7 +39,7 @@ import java.util.UUID;
 
 public class DynamoDBService implements Service {
 	private static final String TABLE_NAME = "Treasures";
-	private static final String TABLE_ID = "playerId";
+	private static final String PRIM_KEY = "playerId";
 	private static final Logger logger = LoggerFactory.getLogger(DynamoDBService.class);
 
 	private Table table;
@@ -59,8 +59,8 @@ public class DynamoDBService implements Service {
 		try {
 			table = db.createTable(new CreateTableRequest()
 					.withTableName(name)
-					.withKeySchema(new KeySchemaElement(TABLE_ID, KeyType.HASH))
-					.withAttributeDefinitions(new AttributeDefinition(TABLE_ID, ScalarAttributeType.S))
+					.withKeySchema(new KeySchemaElement(PRIM_KEY, KeyType.HASH))
+					.withAttributeDefinitions(new AttributeDefinition(PRIM_KEY, ScalarAttributeType.S))
 					.withProvisionedThroughput(new ProvisionedThroughput(1L, 1L))
 			);
 			logger.info("Created DynamoDB table " + name + " with 1r/1w provisioning. Waiting for it to activate");
@@ -74,7 +74,7 @@ public class DynamoDBService implements Service {
 
 	@Override
 	public Treasure[] getTreasures(UUID playerId) {
-		GetItemSpec spec = new GetItemSpec().withPrimaryKey("playerId", playerId);
+		GetItemSpec spec = new GetItemSpec().withPrimaryKey(PRIM_KEY, playerId);
 		Item outcome;
 		try {
 			outcome = table.getItem(spec);
