@@ -41,22 +41,22 @@ public class DynamoDBServiceTest {
 		Treasure[] treasures = srv.getTreasures(playerId);
 		Assert.assertEquals(treasures.length, 4);
 
-		boolean testTreasuse1AccountFor = false;
-		boolean testTreasuse2AccountFor = false;
-		boolean testTreasuse3AccountFor = false;
-		boolean testTreasuse4AccountFor = false;
+		boolean testTreasuse1AccountedFor = false;
+		boolean testTreasuse2AccountedFor = false;
+		boolean testTreasuse3AccountedFor = false;
+		boolean testTreasuse4AccountedFor = false;
 		for (Treasure t : treasures) {
 			if (t.getId().equals("testTreasure1")) {
-				testTreasuse1AccountFor = true;
+				testTreasuse1AccountedFor = true;
 			} else if (t.getId().equals("testTreasure2")) {
-				testTreasuse2AccountFor = true;
+				testTreasuse2AccountedFor = true;
 			} else if (t.getId().equals("testTreasure3")) {
-				testTreasuse3AccountFor = true;
+				testTreasuse3AccountedFor = true;
 			} else if (t.getId().equals("testTreasure4")) {
-				testTreasuse4AccountFor = true;
+				testTreasuse4AccountedFor = true;
 			}
 		}
-		Assert.assertTrue(testTreasuse1AccountFor && testTreasuse2AccountFor && testTreasuse3AccountFor && testTreasuse4AccountFor);
+		Assert.assertTrue(testTreasuse1AccountedFor && testTreasuse2AccountedFor && testTreasuse3AccountedFor && testTreasuse4AccountedFor);
 	}
 
 	private DynamoDBProvider getDynamoDBProvider() {

@@ -69,7 +69,7 @@ public class DynamoDBService implements Service {
 		}
 		logger.info("DynamoDB table " + TABLE_NAME + " active.");
 	}
-	
+
 	@Override
 	public Treasure[] getTreasures(UUID playerId) {
 		GetItemSpec spec = new GetItemSpec().withPrimaryKey(PRIM_KEY, playerId);
