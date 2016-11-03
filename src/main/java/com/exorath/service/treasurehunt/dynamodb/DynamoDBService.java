@@ -16,11 +16,13 @@
 
 package com.exorath.service.treasurehunt.dynamodb;
 
+import com.amazonaws.services.dynamodbv2.document.AttributeUpdate;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.Table;
+import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
+import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
@@ -35,11 +37,13 @@ import com.exorath.service.treasurehunt.Treasure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.UUID;
 
 public class DynamoDBService implements Service {
 	private static final String TABLE_NAME = "Treasures";
 	private static final String PRIM_KEY = "playerId";
+	private static final String TREASURES_FIELD = "treasures";
 	private static final Logger logger = LoggerFactory.getLogger(DynamoDBService.class);
 
 	private Table table;
@@ -49,9 +53,10 @@ public class DynamoDBService implements Service {
 		try {
 			table = getTable(TABLE_NAME, provider.getDB());
 		} catch (InterruptedException ex) {
-			logger.error("DynamoDB table " + TABLE_NAME + " could not activate.");
+			logger.error("DynamoDB table " + TABLE_NAME + " could not activate!\n" + ex.getMessage());
 			System.exit(1);
 		}
+		logger.info("DynamoDB table " + TABLE_NAME + " active.");
 	}
 
 	private Table getTable(String name, DynamoDB db) throws InterruptedException {
@@ -63,10 +68,11 @@ public class DynamoDBService implements Service {
 					.withAttributeDefinitions(new AttributeDefinition(PRIM_KEY, ScalarAttributeType.S))
 					.withProvisionedThroughput(new ProvisionedThroughput(1L, 1L))
 			);
-			logger.info("Created DynamoDB table " + name + " with 1r/1w provisioning. Waiting for it to activate");
+			logger.info("Created DynamoDB table " + name + " with 1r/1w provisioning. Waiting for it to activate.");
 			table.waitForActive();
-		} catch (ResourceInUseException e) { //table exists, let's make sure it's active
+		} catch (ResourceInUseException ex) {
 			table = db.getTable(TABLE_NAME);
+			logger.info("DynamoDB table " + name + " already existed. Waiting for it to activate.");
 			table.waitForActive();
 		}
 		return table;
@@ -75,32 +81,27 @@ public class DynamoDBService implements Service {
 	@Override
 	public Treasure[] getTreasures(UUID playerId) {
 		GetItemSpec spec = new GetItemSpec().withPrimaryKey(PRIM_KEY, playerId);
-		Item outcome;
-		try {
-			outcome = table.getItem(spec);
-			logger.info("getTreasures(" + playerId + ") succeeded:\n" + outcome);
-		} catch (Exception ex) {
-			logger.error("getTreasures(" + playerId + ") failed:\n" + ex.getMessage());
+		Item item = table.getItem(spec);
+		if (item == null || !item.hasAttribute(TREASURES_FIELD)) {
 			return new Treasure[0];
+		} else {
+			List list = item.getList(TREASURES_FIELD);
+			Treasure[] treasures = new Treasure[list.size()];
+			int i = 0;
+			for (Object treasure : list) {
+				treasures[i++] = new Treasure(treasure.toString());
+			}
+			return treasures;
 		}
-		Treasure[] treasures = new Treasure[outcome.numberOfAttributes()];
-		int i = 0;
-		for (Object o : outcome.asMap().values()) {
-			treasures[i++] = new Treasure(o.toString());
-		}
-		return treasures;
 	}
 
 	@Override
 	public Result setTreasure(UUID playerId, String treasureId) {
-		try {
-			PutItemOutcome outcome = table.putItem(new Item()
-					.withPrimaryKey("playerId", playerId, "treasureId", treasureId));
-			logger.info("setTreasure(" + playerId + ", " + treasureId + ") succeeded:\n" + outcome.getPutItemResult());
-		} catch (Exception ex) {
-			logger.error("setTreasure(" + playerId + ", " + treasureId + ") failed:\n" + ex.getMessage());
-			return new Result(false);
-		}
+		UpdateItemSpec spec = new UpdateItemSpec()
+				.withPrimaryKey(PRIM_KEY, playerId)
+				.withAttributeUpdate(new AttributeUpdate(TREASURES_FIELD).addElements(treasureId));
+		UpdateItemOutcome outcome = table.updateItem(spec);
+		logger.info("Updated treasure " + treasureId + " for player " + playerId + " with outcome: " + outcome);
 		return new Result(true);
 	}
 }
