@@ -16,7 +16,6 @@
 
 package com.exorath.service.treasurehunt.dynamodb;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.PutItemOutcome;
@@ -27,7 +26,9 @@ import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
+import com.amazonaws.services.dynamodbv2.model.ResourceInUseException;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
+import com.exorath.service.commons.dynamoDBProvider.DynamoDBProvider;
 import com.exorath.service.treasurehunt.Result;
 import com.exorath.service.treasurehunt.Service;
 import com.exorath.service.treasurehunt.Treasure;
@@ -41,30 +42,34 @@ public class DynamoDBService implements Service {
 	private static final String TABLE_ID = "playerId";
 	private static final Logger logger = LoggerFactory.getLogger(DynamoDBService.class);
 
-	private final Table table;
+	private Table table;
 
 	public DynamoDBService() {
-		AmazonDynamoDBClient client = new AmazonDynamoDBClient().withEndpoint("http://localhost:8000");
-		table = new DynamoDB(client).getTable(TABLE_NAME);
-		/*
-		DynamoDBProvider provider = new DynamoDBProvider(Regions.EU_CENTRAL_1);
-		if (!provider.hasTable(TABLE_NAME)) {
-			try {
-				provider.createTable(getCreateTableRequest());
-			} catch (InterruptedException ex) {
-				logger.error("Could not create DynamoDB table " + TABLE_NAME + "\n" + ex.getMessage());
-			}
+		DynamoDBProvider provider = DynamoDBProvider.getEnvironmentDynamoDBProvider();
+		try {
+			table = getTable(TABLE_NAME, provider.getDB());
+		} catch (InterruptedException ex) {
+			logger.error("DynamoDB table " + TABLE_NAME + " could not activate.");
+			System.exit(1);
 		}
-		table = provider.getTable(TABLE_NAME);
-		*/
 	}
 
-	private CreateTableRequest getCreateTableRequest() {
-		return new CreateTableRequest()
-				.withTableName(TABLE_NAME)
-				.withKeySchema(new KeySchemaElement(TABLE_ID, KeyType.HASH))
-				.withAttributeDefinitions(new AttributeDefinition(TABLE_ID, ScalarAttributeType.S))
-				.withProvisionedThroughput(new ProvisionedThroughput(1L, 1L));
+	private Table getTable(String name, DynamoDB db) throws InterruptedException {
+		Table table;
+		try {
+			table = db.createTable(new CreateTableRequest()
+					.withTableName(name)
+					.withKeySchema(new KeySchemaElement(TABLE_ID, KeyType.HASH))
+					.withAttributeDefinitions(new AttributeDefinition(TABLE_ID, ScalarAttributeType.S))
+					.withProvisionedThroughput(new ProvisionedThroughput(1L, 1L))
+			);
+			logger.info("Created DynamoDB table " + name + " with 1r/1w provisioning. Waiting for it to activate");
+			table.waitForActive();
+		} catch (ResourceInUseException e) { //table exists, let's make sure it's active
+			table = db.getTable(TABLE_NAME);
+			table.waitForActive();
+		}
+		return table;
 	}
 
 	@Override
