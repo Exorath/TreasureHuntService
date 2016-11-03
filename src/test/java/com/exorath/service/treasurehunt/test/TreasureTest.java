@@ -22,13 +22,14 @@ import org.junit.Test;
 
 public class TreasureTest {
 	private static final String TREASURE_TEST_ID_1 = "598782lklsjflasf;09";
+	private static final String TREASURE_TEST_ID_2 = "";
 
 	@Test
 	public void testTreasureIdEqualsConstructorId() {
 		Treasure treasure = new Treasure(TREASURE_TEST_ID_1);
 		Assert.assertEquals(treasure.getId(), TREASURE_TEST_ID_1);
 
-		treasure = new Treasure("");
-		Assert.assertEquals(treasure.getId(), TREASURE_TEST_ID_1);
+		treasure = new Treasure(TREASURE_TEST_ID_2);
+		Assert.assertEquals(treasure.getId(), TREASURE_TEST_ID_2);
 	}
 }
