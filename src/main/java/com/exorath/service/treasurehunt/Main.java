@@ -16,8 +16,7 @@
 
 package com.exorath.service.treasurehunt;
 
-import com.exorath.service.treasurehunt.service.DynamoDBService;
-import com.exorath.service.treasurehunt.service.Service;
+import com.exorath.service.treasurehunt.dynamodb.DynamoDBService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

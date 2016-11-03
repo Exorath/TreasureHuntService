@@ -14,10 +14,7 @@
  * limitations under the License.
  */
 
-package com.exorath.service.treasurehunt.service;
-
-import com.exorath.service.treasurehunt.Result;
-import com.exorath.service.treasurehunt.Treasure;
+package com.exorath.service.treasurehunt;
 
 import java.util.UUID;
 
