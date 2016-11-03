@@ -17,7 +17,6 @@
 package com.exorath.service.treasurehunt.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.document.AttributeUpdate;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
@@ -50,33 +49,27 @@ public class DynamoDBService implements Service {
 
 	public DynamoDBService(DynamoDBProvider provider) {
 		try {
-			table = getTable(TABLE_NAME, provider.getDB());
+			table = provider.getDB().createTable(new CreateTableRequest()
+					.withTableName(TABLE_NAME)
+					.withKeySchema(new KeySchemaElement(PRIM_KEY, KeyType.HASH))
+					.withAttributeDefinitions(new AttributeDefinition(PRIM_KEY, ScalarAttributeType.S))
+					.withProvisionedThroughput(new ProvisionedThroughput(1L, 1L))
+			);
+			logger.info("Created DynamoDB table " + TABLE_NAME + " with 1r/1w provisioning. Waiting for it to activate.");
+		} catch (ResourceInUseException ex) {
+			table = provider.getDB().getTable(TABLE_NAME);
+			logger.info("DynamoDB table " + TABLE_NAME + " already existed. Waiting for it to activate.");
+		}
+
+		try {
+			table.waitForActive();
 		} catch (InterruptedException ex) {
 			logger.error("DynamoDB table " + TABLE_NAME + " could not activate!\n" + ex.getMessage());
 			System.exit(1);
 		}
 		logger.info("DynamoDB table " + TABLE_NAME + " active.");
 	}
-
-	private Table getTable(String name, DynamoDB db) throws InterruptedException {
-		Table table;
-		try {
-			table = db.createTable(new CreateTableRequest()
-					.withTableName(name)
-					.withKeySchema(new KeySchemaElement(PRIM_KEY, KeyType.HASH))
-					.withAttributeDefinitions(new AttributeDefinition(PRIM_KEY, ScalarAttributeType.S))
-					.withProvisionedThroughput(new ProvisionedThroughput(1L, 1L))
-			);
-			logger.info("Created DynamoDB table " + name + " with 1r/1w provisioning. Waiting for it to activate.");
-			table.waitForActive();
-		} catch (ResourceInUseException ex) {
-			table = db.getTable(TABLE_NAME);
-			logger.info("DynamoDB table " + name + " already existed. Waiting for it to activate.");
-			table.waitForActive();
-		}
-		return table;
-	}
-
+	
 	@Override
 	public Treasure[] getTreasures(UUID playerId) {
 		GetItemSpec spec = new GetItemSpec().withPrimaryKey(PRIM_KEY, playerId);
