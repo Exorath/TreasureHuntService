@@ -26,6 +26,9 @@ public class Result {
 		this.success = success;
 	}
 
+	/**
+	 * @return Whether or not this result represents a success.
+	 */
 	public boolean isSuccess() {
 		return success;
 	}
