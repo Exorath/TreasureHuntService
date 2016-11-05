@@ -17,6 +17,7 @@
 package com.exorath.service.treasurehunt;
 
 import com.exorath.service.commons.dynamoDBProvider.DynamoDBProvider;
+import com.exorath.service.commons.portProvider.PortProvider;
 import com.exorath.service.treasurehunt.dynamodb.DynamoDBService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +32,9 @@ public class Main {
 	private Main(String[] args) {
 		DynamoDBProvider provider = DynamoDBProvider.getEnvironmentDynamoDBProvider();
 		Service service = new DynamoDBService(provider);
-		logger.info("Service instantiated.");
+		logger.info("Treasure Hunt Service instantiated.");
 
-		Transport.setup(service, new PortProvider(80));
+		Transport.setup(service, PortProvider.getEnvironmentPortProvider());
 		logger.info("HTTP transport setup.");
 	}
 }
