@@ -23,16 +23,18 @@ import com.amazonaws.services.dynamodbv2.document.UpdateItemOutcome;
 import com.amazonaws.services.dynamodbv2.document.spec.GetItemSpec;
 import com.amazonaws.services.dynamodbv2.document.spec.UpdateItemSpec;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
+import com.amazonaws.services.dynamodbv2.model.ConditionalCheckFailedException;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
 import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
 import com.amazonaws.services.dynamodbv2.model.KeyType;
 import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
 import com.amazonaws.services.dynamodbv2.model.ResourceInUseException;
+import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.exorath.service.commons.dynamoDBProvider.DynamoDBProvider;
-import com.exorath.service.treasurehunt.Result;
 import com.exorath.service.treasurehunt.Service;
-import com.exorath.service.treasurehunt.Treasure;
+import com.exorath.service.treasurehunt.res.Result;
+import com.exorath.service.treasurehunt.res.Treasure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,9 +94,20 @@ public class DynamoDBService implements Service {
 	public Result setTreasure(UUID playerId, String treasureId) {
 		UpdateItemSpec spec = new UpdateItemSpec()
 				.withPrimaryKey(PRIM_KEY, playerId.toString())
-				.withAttributeUpdate(new AttributeUpdate(TREASURES_FIELD).addElements(treasureId));
-		UpdateItemOutcome outcome = table.updateItem(spec);
-		logger.info("Updated treasure " + treasureId + " for player " + playerId + " with outcome: " + outcome.getUpdateItemResult());
-		return new Result(true);
+				.withAttributeUpdate(new AttributeUpdate(TREASURES_FIELD).addElements(treasureId))
+				.withReturnValues(ReturnValue.UPDATED_OLD);
+		try {
+			UpdateItemOutcome outcome = table.updateItem(spec);
+			if (!outcome.getUpdateItemResult().toString().contains(treasureId)) {
+				logger.info("Successfully set treasure " + treasureId + " for player " + playerId);
+				return new Result(true);
+			} else {
+				logger.warn("Attempted to set treasure " + treasureId + " for player " + playerId + " a second time");
+				return new Result(false);
+			}
+		} catch (ConditionalCheckFailedException ex) {
+			logger.warn("Updated treasure " + treasureId + " for player " + playerId + " failed\n:" + ex.getMessage());
+			return new Result(false);
+		}
 	}
 }
