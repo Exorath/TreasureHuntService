@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package com.exorath.service.treasurehunt.test;
+package com.exorath.service.treasurehunt;
 
-import com.exorath.service.treasurehunt.Treasure;
+import com.exorath.service.treasurehunt.Result;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class TreasureTest {
-	private static final String TREASURE_TEST_ID_1 = "598782lklsjflasf;09";
-	private static final String TREASURE_TEST_ID_2 = "";
+public class ResultTest {
 
 	@Test
-	public void testTreasureIdEqualsConstructorId() {
-		Treasure treasure = new Treasure(TREASURE_TEST_ID_1);
-		Assert.assertEquals(treasure.getId(), TREASURE_TEST_ID_1);
+	public void testIsSuccessEqualsConstructorSuccess() {
+		Result result = new Result(true);
+		Assert.assertTrue(result.isSuccess());
 
-		treasure = new Treasure(TREASURE_TEST_ID_2);
-		Assert.assertEquals(treasure.getId(), TREASURE_TEST_ID_2);
+		result = new Result(false);
+		Assert.assertFalse(result.isSuccess());
 	}
 }

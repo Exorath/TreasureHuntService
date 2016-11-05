@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.exorath.service.treasurehunt.test.dynamodb;
+package com.exorath.service.treasurehunt.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.exorath.service.commons.dynamoDBProvider.DynamoDBProvider;
 import com.exorath.service.treasurehunt.Service;
 import com.exorath.service.treasurehunt.Treasure;
-import com.exorath.service.treasurehunt.dynamodb.DynamoDBService;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
