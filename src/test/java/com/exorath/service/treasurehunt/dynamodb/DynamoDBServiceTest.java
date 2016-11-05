@@ -19,7 +19,7 @@ package com.exorath.service.treasurehunt.dynamodb;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.exorath.service.commons.dynamoDBProvider.DynamoDBProvider;
 import com.exorath.service.treasurehunt.Service;
-import com.exorath.service.treasurehunt.Treasure;
+import com.exorath.service.treasurehunt.res.Treasure;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -38,6 +38,7 @@ public class DynamoDBServiceTest {
 		Service srv = new DynamoDBService(getDynamoDBProvider());
 		srv.setTreasure(playerId, "testTreasure1");
 		srv.setTreasure(playerId2, "testTreasure3");
+		srv.setTreasure(playerId, "testTreasure2");
 		srv.setTreasure(playerId, "testTreasure2");
 		srv.setTreasure(playerId, "testTreasure3");
 		srv.setTreasure(playerId, "testTreasure4");
