@@ -72,8 +72,9 @@ public class DynamoDBService implements Service {
 
 	@Override
 	public Treasure[] getTreasures(UUID playerId) {
-		GetItemSpec spec = new GetItemSpec().withPrimaryKey(PRIM_KEY, playerId);
+		GetItemSpec spec = new GetItemSpec().withPrimaryKey(PRIM_KEY, playerId.toString());
 		Item item = table.getItem(spec);
+		logger.info("Retrieved the following treasures for player " + playerId + ": " + item);
 		if (item == null || !item.hasAttribute(TREASURES_FIELD)) {
 			return new Treasure[0];
 		} else {
@@ -90,10 +91,10 @@ public class DynamoDBService implements Service {
 	@Override
 	public Result setTreasure(UUID playerId, String treasureId) {
 		UpdateItemSpec spec = new UpdateItemSpec()
-				.withPrimaryKey(PRIM_KEY, playerId)
+				.withPrimaryKey(PRIM_KEY, playerId.toString())
 				.withAttributeUpdate(new AttributeUpdate(TREASURES_FIELD).addElements(treasureId));
 		UpdateItemOutcome outcome = table.updateItem(spec);
-		logger.info("Updated treasure " + treasureId + " for player " + playerId + " with outcome: " + outcome);
+		logger.info("Updated treasure " + treasureId + " for player " + playerId + " with outcome: " + outcome.getUpdateItemResult());
 		return new Result(true);
 	}
 }
