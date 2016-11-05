@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package com.exorath.service.treasurehunt.service;
-
-import com.exorath.service.treasurehunt.Result;
-import com.exorath.service.treasurehunt.Treasure;
+package com.exorath.service.treasurehunt;
 
 import java.util.UUID;
 
+/**
+ * The treasure hunt {@code Service} allows for the setting and retrievel of a {@code Player}'s {@code Treasure}s.
+ */
 public interface Service {
 
+	/**
+	 * @param playerId The id of the {@code Player} for which to retrieve all treasures.
+	 * @return A {@code Treasure} array containing all treasures the specified {@code Player} has found.
+	 */
 	Treasure[] getTreasures(UUID playerId);
 
+	/**
+	 * @param playerId   The id of the {@code Player} to which this treasure should be added.
+	 * @param treasureId The id of the {@code Treasure} the specified {@code Player} has found.
+	 * @return A {@code Result} with information regarding the success of the operation.
+	 */
 	Result setTreasure(UUID playerId, String treasureId);
 }

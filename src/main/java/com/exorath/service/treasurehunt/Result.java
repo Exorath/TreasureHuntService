@@ -18,14 +18,23 @@ package com.exorath.service.treasurehunt;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Wraps the success status of an operation.
+ */
 public class Result {
 	@SerializedName("success")
 	private boolean success;
 
+	/**
+	 * @param success Whether or not this {@code Result} represents a success.
+	 */
 	public Result(boolean success) {
 		this.success = success;
 	}
 
+	/**
+	 * @return Whether or not this {@code Result} represents a success.
+	 */
 	public boolean isSuccess() {
 		return success;
 	}

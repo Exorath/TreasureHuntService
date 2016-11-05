@@ -14,22 +14,22 @@
  * limitations under the License.
  */
 
-package com.exorath.service.treasurehunt.service;
+package com.exorath.service.treasurehunt.test;
 
-import com.exorath.service.treasurehunt.Result;
 import com.exorath.service.treasurehunt.Treasure;
+import org.junit.Assert;
+import org.junit.Test;
 
-import java.util.UUID;
+public class TreasureTest {
+	private static final String TREASURE_TEST_ID_1 = "598782lklsjflasf;09";
+	private static final String TREASURE_TEST_ID_2 = "";
 
-public class DynamoDBService extends SimpleService {
+	@Test
+	public void testTreasureIdEqualsConstructorId() {
+		Treasure treasure = new Treasure(TREASURE_TEST_ID_1);
+		Assert.assertEquals(treasure.getId(), TREASURE_TEST_ID_1);
 
-	@Override
-	public Treasure[] getTreasures(UUID playerId) {
-		return new Treasure[0];
-	}
-
-	@Override
-	public Result setTreasure(UUID playerId, String treasureId) {
-		return new Result(false);
+		treasure = new Treasure(TREASURE_TEST_ID_2);
+		Assert.assertEquals(treasure.getId(), TREASURE_TEST_ID_2);
 	}
 }

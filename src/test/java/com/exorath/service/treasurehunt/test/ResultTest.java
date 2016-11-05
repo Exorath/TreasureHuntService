@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-package com.exorath.service.treasurehunt.service;
+package com.exorath.service.treasurehunt.test;
 
-public abstract class SimpleService implements Service {
+import com.exorath.service.treasurehunt.Result;
+import org.junit.Assert;
+import org.junit.Test;
 
+public class ResultTest {
+
+	@Test
+	public void testIsSuccessEqualsConstructorSuccess() {
+		Result result = new Result(true);
+		Assert.assertTrue(result.isSuccess());
+
+		result = new Result(false);
+		Assert.assertFalse(result.isSuccess());
+	}
 }

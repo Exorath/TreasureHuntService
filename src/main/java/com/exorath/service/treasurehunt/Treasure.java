@@ -18,10 +18,16 @@ package com.exorath.service.treasurehunt;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * Wraps the data of a treasure.
+ */
 public class Treasure {
 	@SerializedName("id")
 	private String id;
 
+	/**
+	 * @param id The id of this treasure.
+	 */
 	public Treasure(String id) {
 		this.id = id;
 	}
