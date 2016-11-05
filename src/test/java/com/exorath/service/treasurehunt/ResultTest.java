@@ -16,7 +16,7 @@
 
 package com.exorath.service.treasurehunt;
 
-import com.exorath.service.treasurehunt.Result;
+import com.exorath.service.treasurehunt.res.Result;
 import org.junit.Assert;
 import org.junit.Test;
 

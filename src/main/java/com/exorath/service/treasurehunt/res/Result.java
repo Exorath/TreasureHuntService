@@ -14,28 +14,28 @@
  * limitations under the License.
  */
 
-package com.exorath.service.treasurehunt;
+package com.exorath.service.treasurehunt.res;
 
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Wraps the data of a treasure.
+ * Wraps the success status of an operation.
  */
-public class Treasure {
-	@SerializedName("id")
-	private String id;
+public class Result {
+	@SerializedName("success")
+	private boolean success;
 
 	/**
-	 * @param id The id of this treasure.
+	 * @param success Whether or not this {@code Result} represents a success.
 	 */
-	public Treasure(String id) {
-		this.id = id;
+	public Result(boolean success) {
+		this.success = success;
 	}
 
 	/**
-	 * @return The id of this treasure.
+	 * @return true if the operation was a success, false otherwise.
 	 */
-	public String getId() {
-		return id;
+	public boolean isSuccess() {
+		return success;
 	}
 }

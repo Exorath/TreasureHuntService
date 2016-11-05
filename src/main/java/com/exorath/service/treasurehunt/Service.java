@@ -16,6 +16,9 @@
 
 package com.exorath.service.treasurehunt;
 
+import com.exorath.service.treasurehunt.res.Result;
+import com.exorath.service.treasurehunt.res.Treasure;
+
 import java.util.UUID;
 
 /**
