@@ -16,18 +16,20 @@
 
 package com.exorath.service.treasurehunt;
 
-import com.exorath.service.treasurehunt.res.Result;
+import com.exorath.service.treasurehunt.res.PutResult;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class ResultTest {
+public class PutResultTest {
 
 	@Test
 	public void testIsSuccessEqualsConstructorSuccess() {
-		Result result = new Result(true);
+		PutResult result = new PutResult();
 		Assert.assertTrue(result.isSuccess());
 
-		result = new Result(false);
+		String error = "This is an error";
+		result = new PutResult(error);
 		Assert.assertFalse(result.isSuccess());
+		Assert.assertEquals(result.getError(), error);
 	}
 }

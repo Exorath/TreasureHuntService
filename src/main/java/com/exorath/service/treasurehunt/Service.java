@@ -16,8 +16,8 @@
 
 package com.exorath.service.treasurehunt;
 
-import com.exorath.service.treasurehunt.res.Result;
-import com.exorath.service.treasurehunt.res.Treasure;
+import com.exorath.service.treasurehunt.res.GetResult;
+import com.exorath.service.treasurehunt.res.PutResult;
 
 import java.util.UUID;
 
@@ -30,12 +30,12 @@ public interface Service {
 	 * @param playerId The id of the {@code Player} for which to retrieve all treasures.
 	 * @return A {@code Treasure} array containing all treasures the specified {@code Player} has found.
 	 */
-	Treasure[] getTreasures(UUID playerId);
+	GetResult getTreasures(UUID playerId);
 
 	/**
 	 * @param playerId   The id of the {@code Player} to which this treasure should be added.
 	 * @param treasureId The id of the {@code Treasure} the specified {@code Player} has found.
-	 * @return A {@code Result} with information regarding the success of the operation.
+	 * @return A {@code PutResult} with information regarding the success of the operation.
 	 */
-	Result setTreasure(UUID playerId, String treasureId);
+	PutResult setTreasure(UUID playerId, String treasureId);
 }

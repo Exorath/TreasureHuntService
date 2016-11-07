@@ -33,7 +33,8 @@ import com.amazonaws.services.dynamodbv2.model.ReturnValue;
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
 import com.exorath.service.commons.dynamoDBProvider.DynamoDBProvider;
 import com.exorath.service.treasurehunt.Service;
-import com.exorath.service.treasurehunt.res.Result;
+import com.exorath.service.treasurehunt.res.GetResult;
+import com.exorath.service.treasurehunt.res.PutResult;
 import com.exorath.service.treasurehunt.res.Treasure;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,12 +74,12 @@ public class DynamoDBService implements Service {
 	}
 
 	@Override
-	public Treasure[] getTreasures(UUID playerId) {
+	public GetResult getTreasures(UUID playerId) {
 		GetItemSpec spec = new GetItemSpec().withPrimaryKey(PRIM_KEY, playerId.toString());
 		Item item = table.getItem(spec);
 		logger.info("Retrieved the following treasures for player " + playerId + ": " + item);
 		if (item == null || !item.hasAttribute(TREASURES_FIELD)) {
-			return new Treasure[0];
+			return new GetResult(new Treasure[0]);
 		} else {
 			List list = item.getList(TREASURES_FIELD);
 			Treasure[] treasures = new Treasure[list.size()];
@@ -86,12 +87,12 @@ public class DynamoDBService implements Service {
 			for (Object treasure : list) {
 				treasures[i++] = new Treasure(treasure.toString());
 			}
-			return treasures;
+			return new GetResult(treasures);
 		}
 	}
 
 	@Override
-	public Result setTreasure(UUID playerId, String treasureId) {
+	public PutResult setTreasure(UUID playerId, String treasureId) {
 		UpdateItemSpec spec = new UpdateItemSpec()
 				.withPrimaryKey(PRIM_KEY, playerId.toString())
 				.withAttributeUpdate(new AttributeUpdate(TREASURES_FIELD).addElements(treasureId))
@@ -100,14 +101,14 @@ public class DynamoDBService implements Service {
 			UpdateItemOutcome outcome = table.updateItem(spec);
 			if (!outcome.getUpdateItemResult().toString().contains(treasureId)) {
 				logger.info("Successfully set treasure " + treasureId + " for player " + playerId);
-				return new Result(true);
+				return new PutResult();
 			} else {
 				logger.warn("Attempted to set treasure " + treasureId + " for player " + playerId + " a second time");
-				return new Result(false);
+				return new PutResult("Treasure " + treasureId + " already set for player " + playerId);
 			}
 		} catch (ConditionalCheckFailedException ex) {
 			logger.warn("Updated treasure " + treasureId + " for player " + playerId + " failed\n:" + ex.getMessage());
-			return new Result(false);
+			return new PutResult(ex.getMessage());
 		}
 	}
 }

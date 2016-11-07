@@ -19,6 +19,7 @@ package com.exorath.service.treasurehunt.dynamodb;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.exorath.service.commons.dynamoDBProvider.DynamoDBProvider;
 import com.exorath.service.treasurehunt.Service;
+import com.exorath.service.treasurehunt.res.GetResult;
 import com.exorath.service.treasurehunt.res.Treasure;
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -44,18 +45,20 @@ public class DynamoDBServiceTest {
 		srv.setTreasure(playerId, "testTreasure4");
 		srv.setTreasure(playerId2, "testTreasure6");
 
-		Treasure[] treasures = srv.getTreasures(playerId);
-		Assert.assertEquals(treasures.length, 4);
+		GetResult result1 = srv.getTreasures(playerId);
+		Assert.assertEquals(result1.getCount(), 4);
+		Assert.assertEquals(result1.getTreasures().length, 4);
 
-		Treasure[] treasures2 = srv.getTreasures(playerId2);
-		Assert.assertEquals(treasures2.length, 2);
+		GetResult result2 = srv.getTreasures(playerId2);
+		Assert.assertEquals(result2.getCount(), 2);
+		Assert.assertEquals(result2.getTreasures().length, 2);
 
 		boolean testTreasure1AccountedFor = false;
 		boolean testTreasure2AccountedFor = false;
 		boolean testTreasure3AccountedFor = false;
 		boolean testTreasure4AccountedFor = false;
 		boolean testTreasure5AccountedFor = false;
-		for (Treasure t : treasures) {
+		for (Treasure t : result1.getTreasures()) {
 			switch (t.getId()) {
 				case "testTreasure1":
 					testTreasure1AccountedFor = true;
@@ -82,7 +85,7 @@ public class DynamoDBServiceTest {
 
 		boolean testTreasure3AccountedFor2 = false;
 		boolean testTreasure6AccountedFor2 = false;
-		for (Treasure t : treasures2) {
+		for (Treasure t : result2.getTreasures()) {
 			switch (t.getId()) {
 				case "testTreasure3":
 					testTreasure3AccountedFor2 = true;
