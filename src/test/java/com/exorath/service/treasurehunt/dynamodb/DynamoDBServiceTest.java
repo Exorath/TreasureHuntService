@@ -17,7 +17,6 @@
 package com.exorath.service.treasurehunt.dynamodb;
 
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.exorath.service.commons.dynamoDBProvider.DynamoDBProvider;
 import com.exorath.service.treasurehunt.Service;
 import com.exorath.service.treasurehunt.res.GetResult;
 import com.exorath.service.treasurehunt.res.Treasure;
@@ -34,9 +33,11 @@ public class DynamoDBServiceTest {
 
 	@Test
 	public void testGetTreasuresEqualsSetTreasures() {
+		DynamoDB db = new DynamoDB(client.getAmazonDynamoDB());
+		Service srv = new DynamoDBService(() -> db);
+
 		UUID playerId = UUID.randomUUID();
 		UUID playerId2 = UUID.randomUUID();
-		Service srv = new DynamoDBService(getDynamoDBProvider());
 		srv.setTreasure(playerId, "testTreasure1");
 		srv.setTreasure(playerId2, "testTreasure3");
 		srv.setTreasure(playerId, "testTreasure2");
@@ -97,10 +98,5 @@ public class DynamoDBServiceTest {
 		}
 		Assert.assertTrue(testTreasure3AccountedFor2 &&
 				testTreasure6AccountedFor2);
-	}
-
-	private DynamoDBProvider getDynamoDBProvider() {
-		DynamoDB db = new DynamoDB(client.getAmazonDynamoDB());
-		return () -> db;
 	}
 }
