@@ -19,7 +19,7 @@ package com.exorath.service.treasurehunt.res;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Wraps the success status of a put operation.
+ * Wraps the success status of a put request.
  */
 public class PutResult {
 	@SerializedName("success")
@@ -39,7 +39,7 @@ public class PutResult {
 	/**
 	 * Creates a new {@code PutResult} representing a failure.
 	 *
-	 * @param err The error associated with the put operation this result represents.
+	 * @param err The error associated with the put request this result represents.
 	 */
 	public PutResult(String err) {
 		this.success = false;
@@ -47,15 +47,15 @@ public class PutResult {
 	}
 
 	/**
-	 * @return true if the operation was a success, false otherwise.
+	 * @return true if the request was a success, false otherwise.
 	 */
 	public boolean isSuccess() {
 		return success;
 	}
 
 	/**
-	 * @return The error message associated with the put opration this result represents. This will only be set if
-	 * {@code isSuccess} returns false.
+	 * @return The error message associated with the put request this result represents. This will only be set if {@code
+	 * isSuccess} returns false.
 	 */
 	public String getError() {
 		return err;

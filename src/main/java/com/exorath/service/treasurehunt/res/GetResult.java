@@ -19,7 +19,7 @@ package com.exorath.service.treasurehunt.res;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Wraps the success status of a put operation.
+ * Wraps the success status of a get request.
  */
 public class GetResult {
 	@SerializedName("count")
@@ -37,7 +37,7 @@ public class GetResult {
 	}
 
 	/**
-	 * @return The amount of treasures the get request this result presents retrieved.
+	 * @return The amount of treasures the get request this result represents retrieved.
 	 */
 	public int getCount() {
 		return count;
