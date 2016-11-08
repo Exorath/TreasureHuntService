@@ -47,12 +47,12 @@ public class DynamoDBServiceTest {
 		srv.setTreasure(playerId2, "testTreasure6");
 
 		GetResult result1 = srv.getTreasures(playerId);
-		Assert.assertEquals(result1.getCount(), 4);
-		Assert.assertEquals(result1.getTreasures().length, 4);
+		Assert.assertEquals(4, result1.getCount());
+		Assert.assertEquals(4, result1.getTreasures().length);
 
 		GetResult result2 = srv.getTreasures(playerId2);
-		Assert.assertEquals(result2.getCount(), 2);
-		Assert.assertEquals(result2.getTreasures().length, 2);
+		Assert.assertEquals(2, result2.getCount());
+		Assert.assertEquals(2, result2.getTreasures().length);
 
 		boolean testTreasure1AccountedFor = false;
 		boolean testTreasure2AccountedFor = false;
